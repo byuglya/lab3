@@ -1,44 +1,36 @@
 on:
   push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+    branches:
+      - main
 
 jobs:
-  build-and-test:
+  test:
     runs-on: self-hosted
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+    - uses: actions/checkout@v3
 
-      - name: Set up Python venv
-        run: |
-          python3 -m venv venv
-          source venv/bin/activate
-          pip install --upgrade pip
-          pip install -r requirements.txt
-          pip install pytest
+    - name: Setup Python
+      uses: actions/setup-python@v4
 
-      - name: Run tests
-        run: |
-          source venv/bin/activate
-          pytest -v
-      
-      - name: Tests failed message
-        if: failure()
-        run: |
-          echo "Тесты не пройдены, ошибка в коде"
+    - name: Install dependencies
+      run: |
+        python -m venv venv
+        source venv/bin/activate
+        pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install pytest
+
+    - name: Run tests
+      run: |
+        source venv/bin/activate
+        pytest || (echo "Тесты не прошли. Pipeline остановлен." && exit 1)
+        echo "Тесты прошли успешно"
 
   deploy:
+    needs: test
     runs-on: self-hosted
-    needs: build-and-test
     if: success()
-
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-
       - name: Deploy
-        run: |
-          echo "Код успешно прошёл все тесты"
+        run: echo "Начинается этап деплоя"

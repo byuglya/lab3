@@ -1,0 +1,36 @@
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  test:
+    runs-on: self-hosted
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Setup Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.x'
+
+    - name: Install dependencies
+      run: |
+        python -m venv venv
+        source venv/bin/activate
+        pip install -r requirements.txt
+
+    - name: Run tests
+      run: |
+        source venv/bin/activate
+        pytest || (echo "Тесты не прошли. Pipeline остановлен." && exit 1)
+        echo "Тесты прошли успешно"
+
+  deploy:
+    needs: test
+    runs-on: self-hosted
+    if: success()
+    steps:
+      - name: Deploy
+        run: echo "Начинается этап деплоя"

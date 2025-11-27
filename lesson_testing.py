@@ -2,7 +2,7 @@ from math import sqrt
 
 def square_eq_solver(a, b, c):
     result = []
-    discriminant = b * b - 4 * a * c
+    discriminant = b * b - 4 / a * c
 
     if discriminant < 0:
         return result

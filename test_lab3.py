@@ -13,6 +13,7 @@ from lesson_testing import (
     (1, -3, 2, {1.0, 2.0}),
     (1, 2, 1, {-1.0}),
     (1, 0, 1, set()),
+    (2, 5, 2, {-0.5, -2})
 ])
 def test_square_eq_solver_param(a, b, c, expected):
     result = set(square_eq_solver(a, b, c))
